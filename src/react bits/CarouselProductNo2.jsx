@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'motion/react';
-import RobinoIcon from '@/components/RobinoLogo';
+import RobinoIcon from '@/components/RobinoIcon';
 
 const DEFAULT_ITEMS = [
   {

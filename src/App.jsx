@@ -5,15 +5,24 @@ import Home from './components/Home.jsx'
 import ProductsComponent from './components/ProductsComponent.jsx'
 import Footer from './sections/Footer.jsx'
 import Me from './sections/Me.jsx'
+import Form from './components/Form.jsx'
+import Portfolio from './Portfolio.jsx'
+import { Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop.jsx'
 
 function App() {
 
   return (
     <>
       <Header />
-      {/* <Loader /> */}
-      {/* <Home /> */}
-      <ProductsComponent />
+          <ScrollToTop />
+          <Routes>
+            {/* <Loader /> */}
+            <Route path='/' element={<Home />}/>
+            <Route path='/products' element={<ProductsComponent />}/>
+            <Route path='/form' element={<Form />}/>
+            <Route path='/portfolio' element={<Portfolio />} />
+          </Routes>
       <Footer />
       <Me />
     </>

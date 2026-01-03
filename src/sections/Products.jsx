@@ -2,6 +2,7 @@ import CarouselProductNo1 from "@/react bits/CarouselProductNo1";
 import CarouselProductNo2 from "@/react bits/CarouselProductNo2";
 import CarouselProductNo3 from "@/react bits/CarouselProductNo3";
 import CarouselProductNo4 from "@/react bits/CarouselProductNo4";
+import {Link} from "react-router-dom"
 
 function Products() {
     return (
@@ -21,16 +22,16 @@ function Products() {
             </div>
             <div className="flex flex-wrap justify-center items-center gap-10">
                 <div>
-                    <button className="cursor-pointer bg-gray-950 text-gray-400 border border-gray-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md outline-none duration-300 group transition-all hover:brightness-150 hover:border-t-4 hover:border-b active:brightness-150 active:border-t-4 active:border-b focus-visible:brightness-150 focus-visible:border-t-4 focus-visible:border-b active:opacity-75">
+                    <Link to="/products"><button className="cursor-pointer bg-gray-950 text-gray-400 border border-gray-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md outline-none duration-300 group transition-all hover:brightness-150 hover:border-t-4 hover:border-b active:brightness-150 active:border-t-4 active:border-b focus-visible:brightness-150 focus-visible:border-t-4 focus-visible:border-b active:opacity-75">
                         <span className=" bg-gray-400 shadow-gray-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 duration-500 group-hover:top-[150%] group-active:top-[150%] group-focus-visible:top-[150%] shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"/>
                         VIEW ALL PRODUCTS
-                    </button>
+                    </button></Link>
                 </div>
                 <div>
-                    <button className=" cursor-pointer bg-gray-950 text-gray-400 border border-gray-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md outline-none duration-300 group transition-all hover:brightness-150 hover:border-t-4 hover:border-b active:brightness-150 active:border-t-4 active:border-b focus-visible:brightness-150 focus-visible:border-t-4 focus-visible:border-b active:opacity-75">
+                    <Link to="/form"><button className=" cursor-pointer bg-gray-950 text-gray-400 border border-gray-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md outline-none duration-300 group transition-all hover:brightness-150 hover:border-t-4 hover:border-b active:brightness-150 active:border-t-4 active:border-b focus-visible:brightness-150 focus-visible:border-t-4 focus-visible:border-b active:opacity-75">
                         <span className=" bg-gray-400 shadow-gray-400 absolute -top-[150%] left-0 inline-flex w-80 h-[5px] rounded-md opacity-50 duration-500 group-hover:top-[150%] group-active:top-[150%] group-focus-visible:top-[150%] shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"/>
                         CUSTOM ORDER
-                    </button>
+                    </button></Link>
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@ function ImageGallery({ images, duration = 0.6, stagger = 0.1 }) {
             className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           {/* overlay للنص يطلع من تحت */}
-          <div className="absolute bottom-0 left-0 w-full p-4 bg-black bg-opacity-40 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-lg">
+          <div className="absolute bottom-0 left-0 w-full p-4 bg-black bg-opacity-40 transform translate-y-full group-hover:translate-y-0 group-active:translate-y-0  transition-transform duration-300 rounded-lg">
             <p className="text-white text-center">{img.alt}</p>
           </div>
         </motion.div>
