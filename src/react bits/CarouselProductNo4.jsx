@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import RobinoIcon from '@/components/RobinoIcon';
-import { getFromCar4 } from '@/components/supabase/GetFromCar4';
+import { GetFromCar4 } from '@/components/supabase/getFromCar4';
 import { useQuery } from '@tanstack/react-query';
 
 const DRAG_BUFFER = 0;
@@ -61,7 +61,7 @@ export default function CarouselProductNo4({
     isPending: carouselPending
   } = useQuery({
     queryKey: ["carousel4"],
-    queryFn: getFromCar4,
+    queryFn: GetFromCar4,
   });
 
   const items = useMemo(() => {
