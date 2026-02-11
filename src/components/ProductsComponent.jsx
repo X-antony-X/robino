@@ -7,8 +7,10 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import {Link} from "react-router-dom"
+import { GetMock } from "./supabase/GetMock.jsx";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-function ProductsComponent(){
+function ProductsComponent({selected, setSelected}) {
 const [open, setOpen] = useState(false);
 const [currentSlides, setCurrentSlides] = useState([]);
 
@@ -105,57 +107,22 @@ const products = [
     img2 : "/coat2.jpeg",
     img3 : "/coat1.jpeg",
     title : "MEDICAL COAT",
+    price : "100 E.P",
     body : "Stay comfortable during your longest lab hours",
     state : "Available",
   },
-  // {
-  //   img1 : "/today1.jpeg",
-  //   img2 : "/today2.jpeg",
-  //   img3 : "/today3.jpeg",
-  //   title : "T-SHIRTS",
-  //   body : "Express your style with our unique printed designs. High-quality prints that last and stand out",
-  //   state : "Sold out",
-  // },
-  // {
-  //   img1 : "/pants1.jpeg",
-  //   img2 : "/pants2.jpeg",
-  //   img3 : "",
-  //   title : "PANTS",
-  //   body : "The perfect blend of comfort and style. Durable fabrics designed for your daily move",
-  //   state : "Sold out",
-  // },
-  // {
-  //   img1 : "/basic1.jpeg",
-  //   img2 : "/basic2.jpeg",
-  //   img3 : "/basic3.jpeg",
-  //   title : "BASICS",
-  //   body : "Simple, clean, and versatile. The foundation of every great outfit, crafted with soft premium cotton",
-  //   state : "Sold out",
-  // },
 ]
-
-const mockUp = [
-  {
-    img1 : "/mock1.jpeg",
-    img2 : "/mock2.jpeg",
-    img3 : "/mock3.jpeg",
-    img4 : "/mock4.jpeg",
-    img5 : "",
-  },
-]
-
 const handleOpenLightbox = (card) => {
-    const slides = [
-      { src: card.img1 },
-      { src: card.img2 },
-      { src: card.img3 },
-      { src: card.img4 },
-      { src: card.img5 },
-      { src: card.img6 },
-    ];
-    setCurrentSlides(slides);
-    setOpen(true);
-  };
+  setCurrentSlides(
+    card.image.map((img) => ({ src: img }))
+  );
+  setOpen(true);
+};
+
+  const { data: mocks = [] } = useQuery({
+    queryKey: ["mock"],
+    queryFn: GetMock,
+  });
 
     return (
 <div className="flex flex-col gap-10">
@@ -185,7 +152,7 @@ const handleOpenLightbox = (card) => {
               </p>
                 <div className="flex items-center justify-center">
                     <div className="relative group">
-                        <Link to="/form"><button className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 shadow-2xl cursor-pointer rounded-xl shadow-zinc-900 transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
+                        <Link to="/form"><button onClick={() => setSelected("business")} className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 shadow-2xl cursor-pointer rounded-xl shadow-zinc-900 transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
                         <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500 p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                         <span className="relative z-10 block px-6 py-3 rounded-xl bg-gray-950">
                             <div className="relative z-10 flex items-center space-x-2">
@@ -245,7 +212,7 @@ const handleOpenLightbox = (card) => {
               </p>
                 <div className="flex items-center justify-center">
                     <div className="relative group">
-                        <Link to="/form"><button className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 shadow-2xl cursor-pointer rounded-xl shadow-zinc-900 transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
+                        <Link to="/form"><button onClick={() => setSelected("mock")} className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 shadow-2xl cursor-pointer rounded-xl shadow-zinc-900 transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
                         <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500 p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                         <span className="relative z-10 block px-6 py-3 rounded-xl bg-gray-950">
                             <div className="relative z-10 flex items-center space-x-2">
@@ -264,7 +231,7 @@ const handleOpenLightbox = (card) => {
       </div>
 
 <div className="w-[90%] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-10">
-      {mockUp.map((card, index) => (
+      {mocks.map((card, index) => (
         <div
           key={index}
           className="relative flex w-full max-w-sm mx-auto flex-col rounded-xl bg-[#1a1a1a] text-gray-200 shadow-md border border-gray-800 mb-10"
@@ -275,11 +242,14 @@ const handleOpenLightbox = (card) => {
             onClick={() => handleOpenLightbox(card)}
           >
             <div className="grid grid-cols-3 grid-rows-2 gap-1 h-44 sm:h-48 transition-transform duration-300 group-hover:scale-105">
-              <img src={card.img1} className="col-span-1 row-span-1 w-full h-full object-cover rounded-md" alt="" />
-              <img src={card.img2} className="col-span-1 row-span-1 w-full h-full object-cover rounded-md" alt="" />
-              <img src={card.img3} className="col-span-1 row-span-1 w-full h-full object-cover rounded-md" alt="" />
-              <img src={card.img4} className="col-span-1 row-span-1 w-full h-full object-cover rounded-md" alt="" />
-              <img src={card.img5} className="col-span-1 row-span-1 w-full h-full object-cover rounded-md" alt="" />
+              {card.image.slice(0, 5).map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  className="col-span-1 row-span-1 w-full h-full object-cover rounded-md"
+                  alt=""
+                />
+              ))}
               <p className="col-span-1 row-span-1 w-full h-full object-cover rounded-md text-center mt-2">Click <br />اضغط للعرض </p>
             </div>
             {/* طبقة شفافة تظهر عند التمرير (Hover) لتعطي إيحاء بالضغط */}
@@ -289,15 +259,14 @@ const handleOpenLightbox = (card) => {
           </div>
 
           <div className="p-6">
-            <h5 className="mb-2 text-xl font-bold text-white">CUSTOM DESIGN PRINT</h5>
+            <h5 className="mb-2 text-xl font-bold text-white">{card.title}</h5>
             <p className="text-sm font-light text-gray-400 text-right rtl">
-              حول فكرتك لواقع <br />
-              بنطبع تصميمك الخاص على أجود خامات القطن بلمسة احترافية تدوم طويلاً
+              {card.description}
             </p>
           </div>
 
           <div className="p-6 pt-0">
-            <Link to="/form"><button className="cursor-pointer w-full rounded-lg bg-white py-3 px-6 text-xs font-bold uppercase text-black shadow-md transition-all hover:scale-105 active:opacity-[0.85]">
+            <Link to="/form"><button onClick={() => setSelected("mock")} className="cursor-pointer w-full rounded-lg bg-white py-3 px-6 text-xs font-bold uppercase text-black shadow-md transition-all hover:scale-105 active:opacity-[0.85]">
               اطلب تصميمك الآن
             </button></Link>
           </div>
@@ -333,6 +302,7 @@ const handleOpenLightbox = (card) => {
         stagger={100}
         easing="cubic-bezier(0.16, 1, 0.3, 1)"
         products={products}
+        setSelected={setSelected}
       />
 
 </div>

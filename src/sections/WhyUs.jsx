@@ -15,16 +15,16 @@ const WhyUs = () => {
         Premium Quality Fabrics
         <br />
         <br />
-        Made for Everyday Wear
+        Designed for Your Business
         <br />
         <br />
         Comfortable Fit
         <br />
         <br />
-        Fast Delivery
+        Trusted by Real Businesses
         <br />
         <br />
-        Easy Returns
+        Real clients, real results
       </div>
     </div>
 </div>

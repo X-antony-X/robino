@@ -14,10 +14,11 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
+    "@supabase/supabase-js": "^2.94.1",
     "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/react-query": "^5.90.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "firebase": "^12.7.0",
     "framer-motion": "^12.23.26",
     "gsap": "^3.14.2",
     "lucide-react": "^0.562.0",
@@ -28,6 +29,7 @@
     "react-medium-image-zoom": "^5.4.0",
     "react-router-dom": "^7.11.0",
     "tailwind-merge": "^3.4.0",
+    "uuid": "^13.0.0",
     "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {

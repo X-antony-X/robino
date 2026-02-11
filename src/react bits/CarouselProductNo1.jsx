@@ -1,33 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import RobinoIcon from '@/components/RobinoIcon';
-
-const DEFAULT_ITEMS = [
-  {
-    title: 'DESVELO CAFE',
-    description: 'Premium quality fabrics and modern designs',
-    id: 1,
-    image: '/desvelo1.jpg'
-  },
-  {
-    title: 'DESVELO CAFE',
-    description: 'Unique pieces for a standout look',
-    id: 2,
-    image: '/desvelo2.jpg'
-  },
-  {
-    title: 'DESVELO CAFE',
-    description: 'Dress well, drink better',
-    id: 3,
-    image: '/desvelo3.jpg'
-  },
-  {
-    title: 'DESVELO CAFE',
-    description: 'Soft touch, high-quality materials',
-    id: 4,
-    image: '/desvelo4.jpg'
-  },
-];
+import { getFromCar1 } from '@/components/supabase/GetFromCar1';
+import { useQuery } from '@tanstack/react-query';
 
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
@@ -38,6 +13,7 @@ function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x
   const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
   const outputRange = [90, 0, -90];
   const rotateY = useTransform(x, range, outputRange, { clamp: false });
+
 
   return (
     <motion.div
@@ -65,14 +41,12 @@ function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x
       </div>
       <div className="p-5">
         <div className="mb-1 font-black text-lg text-white">{item.title}</div>
-        <p className="text-sm text-[#ffffff]">{item.description}</p>
       </div>
     </motion.div>
   );
 }
 
 export default function CarouselProductNo1({
-  items = DEFAULT_ITEMS,
   baseWidth = 300,
   autoplay = true,
   autoplayDelay = 2500,
@@ -80,6 +54,25 @@ export default function CarouselProductNo1({
   loop = true,
   round = false
 }) {
+  const {
+    data: carouselData = [],
+    error: carouselError,
+    isPending: carouselPending
+  } = useQuery({
+    queryKey: ["carousel1"],
+    queryFn: getFromCar1,
+  });
+
+  const items = useMemo(() => {
+    return carouselData.flatMap(item =>
+      (item.images || []).map((img, i) => ({
+        id: `${item.id}-${i}`,
+        title: item.title,
+        image: img
+      }))
+    );
+  }, [carouselData]);
+
   const containerPadding = 16;
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + GAP;

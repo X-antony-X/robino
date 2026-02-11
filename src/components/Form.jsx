@@ -5,7 +5,12 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
+import Toggle from '@/ui-verse/Toggle';
+import { useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { GetReadyMade } from "./supabase/GetReadyMade";
+import { GetMaterial } from './supabase/GetMaterial';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -20,21 +25,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'ميلتون قطن إسفنجي (هودي)',
-  'ميلتون قطن إسفنجي (راوند)',
-  'ميلتون قطن إسفنجي (لياقه)',
-  'ميلتون قطن إسفنجي (ربع سوسته)',
-  'ميلتون إسبن',
-  'ميلتون مخلوط',
-  'بيكة مخلوط (بولو)',
-  'بيكة إسبن (بولو)',
-  'جبردين خفيف (للمرايل و جواكت المطبخ)',
-  'جبردين تقيل (للمرايل و جواكت المطبخ)',
-  'جبردين تقيل جدا (للمرايل و جواكت المطبخ)',
-  'كريب إيطالي',
-  'بيزيك'
-];
 
 function getStyles(name, personName, theme) {
   return {
@@ -50,15 +40,73 @@ const darkTheme = createTheme({
   },
 });
 
-function Form() {
+function Form({selected, setSelected}) {
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
   const [clientName, setClientName] = useState("");
   const [number, setNumber] = useState("");
   const [address, setAddress] = useState("");
   const [message, setMessage] = useState("");
+  const { state } = useLocation();
 
-  const handleSubmit = (e) => {
+  const { data: readyItems = [] } = useQuery({
+    queryKey: ["ready-made"],
+    queryFn: GetReadyMade,
+  });
+
+  const { data: materials = [] } = useQuery({
+    queryKey: ["materials"],
+    queryFn: GetMaterial,
+  });
+
+  const handleItems = (e) => {
+    e.preventDefault();
+
+    const myNumber = "201099018767";
+    const selectedMaterials = personName.length > 0 ? personName.join(' - ') : "لم يتم التحديد";
+
+    const finalMessage = 
+      `*طلب جديد من موقع روبينو* 👕%0A%0A` +
+      `*الاسم:* ${clientName}%0A` +
+      `*رقم التواصل:* ${number}%0A` +
+      `*الطلب:* ${selectedMaterials}%0A` +
+      `*التفاصيل:* ${message}%0A%0A`;
+
+    const whatsappURL = `https://wa.me/${myNumber}?text=${finalMessage}`;
+    window.open(whatsappURL, "_blank");
+
+    // تصفير الفورم
+    setClientName("");
+    setNumber("");
+    setAddress("");
+    setMessage("");
+    setPersonName([]);
+  };
+  const handleMock = (e) => {
+    e.preventDefault();
+
+    const myNumber = "201099018767";
+    const selectedMaterials = personName.length > 0 ? personName.join(' - ') : "لم يتم التحديد";
+
+    const finalMessage = 
+      `*طلب جديد من موقع روبينو* 👕%0A%0A` +
+      `*الاسم:* ${clientName}%0A` +
+      `*رقم التواصل:* ${number}%0A` +
+      `*الطلب:* ${selectedMaterials}%0A` +
+      `*التفاصيل:* ${message}%0A%0A` +
+      `_(ملاحظة: سأقوم بإرسال صور التصميم في الرسالة القادمة)_`;
+
+    const whatsappURL = `https://wa.me/${myNumber}?text=${finalMessage}`;
+    window.open(whatsappURL, "_blank");
+
+    // تصفير الفورم
+    setClientName("");
+    setNumber("");
+    setAddress("");
+    setMessage("");
+    setPersonName([]);
+  };
+  const handleBusiness = (e) => {
     e.preventDefault();
 
     const myNumber = "201099018767";
@@ -89,15 +137,24 @@ function Form() {
     setPersonName(typeof value === 'string' ? value.split(',') : value);
   };
 
+useEffect(() => {
+  if (state?.item) {
+    setPersonName([state.item]);
+  }
+}, [state]);
+
   return (
     <ThemeProvider theme={darkTheme}>
+
       <div className="flex flex-col items-center justify-center min-h-screen mt-30">
+      <Toggle setSelected={setSelected} selected={selected} />
         <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-200 mb-6 text-center">طلب تنفيذ عمل</h2>
-          
-          <form className="flex flex-col" onSubmit={handleSubmit}>
+          {selected === "items" && (<>
+          <h2 className="text-2xl font-bold text-gray-200 mb-6 text-center">Available Items Order</h2>
+          <h3 className="text-sm font-bold text-gray-200 mb-6 text-center">تقدر من هنا تطلب اي منتج من منتجات روبينو المتاحه</h3>
+          <form className="flex flex-col" onSubmit={handleItems}>
             <input 
-                placeholder="إسم العميل/اسم المؤسسه" 
+                placeholder="Customer Name" 
                 className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
                 type="text"
                 required
@@ -106,16 +163,122 @@ function Form() {
             />
             
             <input 
-                placeholder="رقم التواصل (واتساب)" 
+                placeholder="Phone Number (WhatsApp)" 
+                className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
+                type="tel"
+                required 
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+            />
+
+            <FormControl fullWidth sx={{ mb: 4 }}>
+              <InputLabel sx={{ color: '#9ca3af' }}>
+                Available Items
+              </InputLabel>
+
+              <Select
+                multiple
+                value={personName}
+                onChange={handleChange}
+                input={<OutlinedInput label="Available Items" />}
+                MenuProps={MenuProps}
+                sx={{ backgroundColor: '#374151', color: 'white', textAlign: 'right' }}
+              >
+                {readyItems.map((item) => (
+                  <MenuItem
+                    key={item.id}
+                    value={item.title}
+                    style={getStyles(item.title, personName, theme)}
+                  >
+                    {item.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+
+            <textarea 
+                placeholder="Notes (Optional)" 
+                className="placeholder:text-center max-h-[300px] min-h-[100px] bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right h-32" 
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+            />
+
+            <button 
+              className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:scale-[1.02] text-white font-bold py-3 px-4 rounded-md mt-2 transition duration-150"
+              type="submit"
+            >
+              إرسال الطلب عبر واتساب
+            </button>
+          </form></>)}
+          {selected === "mock" && (<>
+          <h2 className="text-2xl font-bold text-gray-200 mb-6 text-center">Design Preview Request</h2>
+          <h3 className="text-sm font-bold text-gray-200 mb-6 text-center">تقدر من هنا تطلب تصميم خاص بيك انت تقدر تختار فيه اللون و الخامه و اي صوره انت حابب تطبعها عليه</h3>
+
+          <form className="flex flex-col" onSubmit={handleMock}>
+            <input 
+                placeholder="Client Name" 
                 className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
                 type="text"
+                required
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+            />
+            
+            <input 
+                placeholder="Phone Number (WhatsApp)" 
+                className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
+                type="tel"
+                required 
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+            />
+
+            <textarea 
+                placeholder="Notes (اوصف التصميم اللي انت عايزه)" 
+                className="placeholder:text-center max-h-[300px] min-h-[100px] bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right h-32" 
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+            />
+
+            {/* صندوق تنبيه للعميل بخصوص الصور */}
+            <div className="bg-blue-900/30 border border-blue-500/50 rounded-md p-4 mb-4 text-right">
+              <p className="text-blue-200 text-sm leading-relaxed">
+                 ملحوظة: <b>ممكن تبعت اللوجو او التصميم اللي انت عايز تطبعه </b>مباشرة في شات الواتساب بعد الضغط على زرار الإرسال بالأسفل 
+              </p>
+            </div>
+
+            <button 
+              className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:scale-[1.02] text-white font-bold py-3 px-4 rounded-md mt-2 transition duration-150"
+              type="submit"
+            >
+              إرسال الطلب عبر واتساب
+            </button>
+          </form></>)}
+          {selected === "business" && (<>
+          <h2 className="text-2xl font-bold text-gray-200 mb-6 text-center">Business Order</h2>
+          <h3 className="text-sm font-bold text-gray-200 mb-6 text-center">تقدر من هنا تطلب طلب تجاري لمشروعك من روبينو</h3>
+          <form className="flex flex-col" onSubmit={handleBusiness}>
+            <input 
+                placeholder="Business owner name" 
+                className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
+                type="text"
+                required
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+            />
+            
+            <input 
+                placeholder="Phone Number (WhatsApp)" 
+                className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
+                type="tel"
                 required 
                 value={number}
                 onChange={(e) => setNumber(e.target.value)}
             />
 
             <input 
-                placeholder="عنوان المؤسسه/عنوانك" 
+                placeholder="Business Address" 
                 className="placeholder:text-center bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right" 
                 type="text"
                 required 
@@ -133,16 +296,20 @@ function Form() {
                 MenuProps={MenuProps}
                 sx={{ backgroundColor: '#374151', color: 'white' }}
               >
-                {names.map((name) => (
-                  <MenuItem key={name} value={name} style={getStyles(name, personName, theme)}>
-                    {name}
-                  </MenuItem>
-                ))}
+              {materials.map((item) => (
+                <MenuItem
+                  key={item.id}
+                  value={item.material}
+                  style={getStyles(item.material, personName, theme)}
+                >
+                  {item.material}
+                </MenuItem>
+              ))}
               </Select>
             </FormControl>
 
             <textarea 
-                placeholder="تفاصيل اكتر عن الطلب (الالوان , العدد)" 
+                placeholder="Additional Details (Colors, Quantity, Sizes, Quantity.)" 
                 className="max-h-[300px] min-h-[100px] bg-gray-700 text-gray-200 border-0 rounded-md p-3 mb-4 outline-none text-right h-32" 
                 onChange={(e) => setMessage(e.target.value)}
                 value={message}
@@ -161,7 +328,7 @@ function Form() {
             >
               إرسال الطلب عبر واتساب
             </button>
-          </form>
+          </form></>)}
         </div>
       </div>
     </ThemeProvider>

@@ -1,33 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import RobinoIcon from '@/components/RobinoIcon';
-
-const DEFAULT_ITEMS = [
-  {
-    title: 'PIZZA HEAVEN',
-    description: 'Professional uniforms for the best pizza team',
-    id: 1,
-    image: 'heaven1.jpg'
-  },
-  {
-    title: 'PIZZA HEAVEN',
-    description: 'Designed for comfort and speed in the kitchen',
-    id: 2,
-    image: 'heaven2.jpg'
-  },
-  {
-    title: 'PIZZA HEAVEN',
-    description: 'Durable fabrics that stay fresh all shift long',
-    id: 3,
-    image: 'heaven3.jpg'
-  },
-  {
-    title: 'PIZZA HEAVEN',
-    description: 'Durable fabrics that stay fresh all shift long',
-    id: 4,
-    image: 'heaven4.jpg'
-  },
-];
+import { getFromCar3 } from '@/components/supabase/GetFromCar3';
+import { useQuery } from '@tanstack/react-query';
 
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
@@ -65,14 +40,12 @@ function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x
       </div>
       <div className="p-5">
         <div className="mb-1 font-black text-lg text-white">{item.title}</div>
-        <p className="text-sm text-white">{item.description}</p>
       </div>
     </motion.div>
   );
 }
 
 export default function CarouselProductNo3({
-  items = DEFAULT_ITEMS,
   baseWidth = 300,
   autoplay = true,
   autoplayDelay = 2500,
@@ -80,6 +53,26 @@ export default function CarouselProductNo3({
   loop = true,
   round = false
 }) {
+
+  const {
+    data: carouselData = [],
+    error: carouselError,
+    isPending: carouselPending
+  } = useQuery({
+    queryKey: ["carousel3"],
+    queryFn: getFromCar3,
+  });
+
+  const items = useMemo(() => {
+    return carouselData.flatMap(item =>
+      (item.images || []).map((img, i) => ({
+        id: `${item.id}-${i}`,
+        title: item.title,
+        image: img
+      }))
+    );
+  }, [carouselData]);
+
   const containerPadding = 16;
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + GAP;

@@ -1,17 +1,29 @@
 import React from 'react';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { useQuery } from "@tanstack/react-query";
+import { GetProfile } from "@/components/supabase/GetProfile";
 
 function Portfolio(){
+  const { data: profile, isLoading, error } = useQuery({
+    queryKey: ["profile"],
+    queryFn: GetProfile,
+  });
+
+  if (isLoading) {
+    return <div className="text-center text-gray-400">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">Error loading profile</div>;
+  }
+
     return (
 <div className="
   flex flex-col gap-20 items-center
   lg:flex-row lg:justify-evenly
   mt-30
 ">
-
-
-
 
 
 <div className="mb-15 group origin-bottom-right duration-500 rotate-0 -skew-x-12 -translate-x-6 translate-y-12 md:-rotate-12 md:skew-x-0 md:translate-x-0 md:translate-y-0 md:hover:rotate-0 md:hover:-skew-x-12 md:hover:-translate-x-6 md:hover:translate-y-12 active:-translate-x-10 active:translate-y-16">
@@ -40,18 +52,18 @@ function Portfolio(){
 >
   <div className=" w-40 h-40 mx-auto relative rounded-full border-4 border-[#7cdacc] overflow-hidden">
   <Zoom>
-    <img
-      src="/fathy.jpeg"
-      alt="Ahmed Fathy"
-      className="
-        w-full h-full 
-        object-cover 
-        scale-150 object-top
-        transition-transform 
-        duration-500 
-        hover:scale-[1.8] translate-x-5
-        translate-y--10"
-    />
+  <img
+    src={profile?.img}
+    alt="Profile"
+    className="
+      w-full h-full 
+      object-cover 
+      scale-150 object-top
+      transition-transform 
+      duration-500 
+      hover:scale-[1.8] translate-x-5
+    "
+  />
   </Zoom>
   </div>
 
@@ -129,8 +141,10 @@ function Portfolio(){
 
 
     <div className="relative drop-shadow-xl w-48 h-64 overflow-hidden rounded-xl bg-[#3d3c3d]">
-      <div className="absolute flex items-center justify-center text-white z-[1] opacity-90 rounded-xl inset-0.5 bg-[#323132]">
-        CARD
+      <div className="absolute z-[1] rounded-xl inset-0.5 bg-[#323132] p-4 overflow-y-auto">
+        <p className="text-white text-sm leading-relaxed whitespace-pre-line">
+          {profile?.cv}
+        </p>
       </div>
       <div className="absolute w-56 h-48 bg-white blur-[50px] -left-1/2 -top-1/2" />
     </div>

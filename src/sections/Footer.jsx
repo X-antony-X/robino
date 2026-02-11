@@ -1,8 +1,26 @@
 import { FaTiktok } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa";
+import {useState } from "react"
 import { FaWhatsapp } from "react-icons/fa";
+import { AddUser } from "@/components/supabase/AddUser";
+import { useMutation } from "@tanstack/react-query";
 
 function Footer() {
+const [name, setName] = useState("");
+const [phone, setPhone] = useState("");
+
+const addMutation = useMutation({
+  mutationFn: AddUser,
+  onSuccess: () => {
+    setName("");
+    setPhone("");
+    alert("تم الإرسال بنجاح ✅");
+  },
+  onError: (error) => {
+    alert(error.message);
+  },
+});
+
     return (
         <footer className="mt-30 border-t-7 border-[gray] py-10 px-5 flex flex-wrap justify-evenly items-center gap-10 bg-gradient-to-b from-[#121212] via-[#121212] to-[#252525] text-white">
             <div className="flex flex-col justify-start">
@@ -14,38 +32,44 @@ function Footer() {
             </div>
 
             <div className="flex flex-col justify-start items-center gap-6">
+                <p className="nice-font text-[40px]">CONTACT US</p>
 
                 <div className="flex items-center justify-center">
                     <div className="relative">
-                        <input id="username" name="username" type="text" className="border-b border-gray-300 py-1 focus:border-b-2 focus:border-blue-700 transition-colors focus:outline-none peer bg-inherit" />
-                        <label htmlFor="username" className="absolute left-0 top-1 cursor-text peer-focus:text-xs peer-focus:-top-4 transition-all peer-focus:text-blue-700">NAME</label>
+                        <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        type="text"
+                        placeholder=" "
+                        className="border-b border-gray-300 py-1 focus:border-b-2 focus:border-blue-700 transition-colors focus:outline-none peer bg-inherit"/>
+                        <label className="absolute left-0 top-1 cursor-text transition-all text-gray-400 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-blue-700 peer-placeholder-shown:top-1 peer-placeholder-shown:text-base peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs peer-not-placeholder-shown:text-blue-700">
+                            NAME
+                        </label>
                     </div>
                 </div>
 
                 <div className="flex items-center justify-center">
                     <div className="relative">
-                        <input id="username" name="username" type="text" className="border-b border-gray-300 py-1 focus:border-b-2 focus:border-blue-700 transition-colors focus:outline-none peer bg-inherit" />
-                        <label htmlFor="username" className="absolute left-0 top-1 cursor-text peer-focus:text-xs peer-focus:-top-4 transition-all peer-focus:text-blue-700">EMAIL</label>
+                        <input value={phone} onChange={(e) => setPhone(e.target.value)} type="number" placeholder=" " className="border-b border-gray-300 py-1 focus:border-b-2 focus:border-blue-700 transition-colors focus:outline-none peer bg-inherit"/>
+                        <label className="absolute left-0 top-1 cursor-text transition-all text-gray-400 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-blue-700 peer-placeholder-shown:top-1 peer-placeholder-shown:text-base peer-not-placeholder-shown:-top-4 peer-not-placeholder-shown:text-xs peer-not-placeholder-shown:text-blue-700">PHONE NUMBER</label>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-center">
-                    <div className="relative">
-                        <input id="username" name="username" type="text" className="border-b border-gray-300 py-1 focus:border-b-2 focus:border-blue-700 transition-colors focus:outline-none peer bg-inherit" />
-                        <label htmlFor="username" className="absolute left-0 top-1 cursor-text peer-focus:text-xs peer-focus:-top-4 transition-all peer-focus:text-blue-700">PHONE NUMBER</label>
-                    </div>
-                </div>
+                <button
+                disabled={addMutation.isLoading}
+                onClick={() => {
+                    if (!name || !phone) {
+                    alert("من فضلك املى الاسم ورقم الموبايل");
+                    return;
+                    }
 
-                <div className="flex items-center justify-center w-full">
-                    <div className="relative w-full max-w-md">
-                        <textarea className="w-full min-h-[80px] max-h-[120px] resize-y border-b border-gray-300 py-1 bg-inherit focus:border-b-2 focus:border-blue-700 transition-colors focus:outline-none peer"/>
-                        <label className="absolute left-0 top-1 cursor-text transition-all peer-focus:text-xs peer-focus:-top-4 peer-focus:text-blue-700">MESSAGE</label>
-                    </div>
-                </div>
-
-                <button className=" cursor-pointer relative px-10 py-3.5 overflow-hidden group bg-gradient-to-r from-gray-700 to-black hover:from-gray-600 hover:to-black active:from-gray-600 active:to-black focus-visible:from-gray-600 focus-visible:to-black text-white transition-all ease-out duration-300">
-                    <span className=" absolute right-0 w-10 h-full top-0 bg-white opacity-10 -skew-x-12 translate-x-12 transition-all duration-700 ease-out group-hover:-translate-x-36 group-active:-translate-x-36 group-focus-visible:-translate-x-36"/>
-                    <span className="relative text-xl font-semibold">SUBSCRIBE</span>
+                    addMutation.mutate({ name, phone });
+                }}
+                className="cursor-pointer relative px-10 py-3.5 overflow-hidden group bg-gradient-to-r from-gray-700 to-black hover:from-gray-600 hover:to-black text-white transition-all"
+                >
+                <span className="relative text-xl font-semibold">
+                    {addMutation.isLoading ? "SENDING..." : "SUBMIT"}
+                </span>
                 </button>
             </div>
 

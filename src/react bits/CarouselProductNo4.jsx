@@ -1,39 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import RobinoIcon from '@/components/RobinoIcon';
-
-const DEFAULT_ITEMS = [
-  {
-    title: 'EL OMDA SUPERMARKET',
-    description: 'Professional staff uniform with custom branding',
-    id: 1,
-    image: '/omda.jpeg'
-  },
-  {
-    title: 'AHL AL-DAFFA MARKET',
-    description: 'Clean and durable design for retail teams',
-    id: 2,
-    image: '/daffa.jpeg'
-  },
-  {
-    title: 'AL-FARES SEAFOOD',
-    description: 'Specialized waterproof gear for seafood staff',
-    id: 3,
-    image: '/alfares.jpeg'
-  },
-  {
-    title: 'EGYPTIAN KOSHARI',
-    description: 'Authentic style uniforms for traditional restaurants',
-    id: 4,
-    image: '/koshari.jpeg'
-  },
-  {
-    title: 'HASSAN CAFE',
-    description: 'Modern and stylish apron design for baristas',
-    id: 5,
-    image: '/hassan.jpeg'
-  }
-];
+import { getFromCar4 } from '@/components/supabase/GetFromCar4';
+import { useQuery } from '@tanstack/react-query';
 
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
@@ -71,21 +40,40 @@ function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x
       </div>
       <div className="p-5">
         <div className="mb-1 font-black text-lg text-white">{item.title}</div>
-        <p className="text-sm text-white">{item.description}</p>
       </div>
     </motion.div>
   );
 }
 
 export default function CarouselProductNo4({
-  items = DEFAULT_ITEMS,
   baseWidth = 300,
   autoplay = true,
   autoplayDelay = 3000,
   pauseOnHover = true,
   loop = true,
   round = false
-}) {
+})
+{
+
+  const {
+    data: carouselData = [],
+    error: carouselError,
+    isPending: carouselPending
+  } = useQuery({
+    queryKey: ["carousel4"],
+    queryFn: getFromCar4,
+  });
+
+  const items = useMemo(() => {
+    return carouselData.flatMap(item =>
+      (item.images || []).map((img, i) => ({
+        id: `${item.id}-${i}`,
+        title: item.title,
+        image: img
+      }))
+    );
+  }, [carouselData]);
+
   const containerPadding = 16;
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + GAP;
