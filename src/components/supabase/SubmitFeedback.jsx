@@ -1,4 +1,4 @@
-import { supabase } from "@/createClient";
+import { supabase } from "@/CreateClient";
 
 const SubmitFeedback = async (feedbackData, token) => {
   const { data } = await supabase

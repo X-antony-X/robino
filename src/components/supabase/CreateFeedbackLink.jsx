@@ -1,5 +1,5 @@
-import { supabase } from "@/createClient";
 import { v4 as uuidv4 } from "uuid";
+import { supabase } from "@/CreateClient";
 
 const CreateFeedbackLink = async (email) => {
   const token = uuidv4();
