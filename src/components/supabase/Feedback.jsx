@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { supabase } from "@/createClient";
+import { supabase } from "@/CreateClient";
 import SubmitFeedback from "./SubmitFeedback";
 import { useMutation } from "@tanstack/react-query";
 
