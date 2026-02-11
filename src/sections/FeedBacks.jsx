@@ -4,6 +4,8 @@ import { supabase } from '@/CreateClient';
 
 const FeedBacks = () => {
 
+const [currentIndex, setCurrentIndex] = useState(0);
+
 const { data: feedbacks = [], isLoading } = useQuery({
     queryKey: ["feedbacks"],
     queryFn: async () => {
@@ -26,8 +28,6 @@ const { data: feedbacks = [], isLoading } = useQuery({
   for (let i = 0; i < feedbacks.length; i += chunkSize) {
     chunks.push(feedbacks.slice(i, i + chunkSize));
   }
-
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => {
     if (currentIndex < chunks.length - 1) {
