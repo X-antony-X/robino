@@ -7,7 +7,6 @@ import { GetProfile } from "./GetProfile";
 function MyPortfolio() {
     const queryClient = useQueryClient();
 
-    // 1. جلب البيانات من السيرفر
     const { data: existingProfile, isLoading: isFetching } = useQuery({
         queryKey: ["profile"],
         queryFn: GetProfile,
@@ -16,7 +15,6 @@ function MyPortfolio() {
     const [cvText, setCvText] = useState("");
     const [imageFile, setImageFile] = useState(null);
 
-    // 2. مزامنة البيانات: تحديث الـ Input عند وصول البيانات
     useEffect(() => {
         if (existingProfile) {
             setCvText(existingProfile.cv || "");
@@ -33,7 +31,7 @@ function MyPortfolio() {
         },
         onSuccess: () => {
             alert("تم التحديث بنجاح! ✨");
-            queryClient.invalidateQueries(["profile"]); // أهم سطر لتحديث العرض فوراً
+            queryClient.invalidateQueries(["profile"]);
             setImageFile(null);
         },
     });
@@ -54,7 +52,6 @@ function MyPortfolio() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12" style={{ direction: 'rtl' }}>
                 
-                {/* --- قسم التحكم (Form) --- */}
                 <section className="text-right order-2 md:order-1">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
@@ -87,11 +84,9 @@ function MyPortfolio() {
                     </form>
                 </section>
 
-                {/* --- قسم العرض (Preview) --- */}
                 <section className="bg-gray-50 p-8 rounded-lg border border-gray-100 shadow-sm flex flex-col items-center order-1 md:order-2">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-8 border-b border-gray-200 w-full pb-2 text-center">المعاينة الحالية</h3>
                     
-                    {/* هنا يتم عرض الصورة من السيرفر */}
                     <div className="mb-6">
                         {existingProfile?.img ? (
                             <img 
@@ -106,7 +101,6 @@ function MyPortfolio() {
                         )}
                     </div>
 
-                    {/* هنا يتم عرض الـ CV من السيرفر */}
                     <div className="w-full text-right">
                         <label className="text-xs font-bold text-gray-400 block mb-2 underline">السيرة الذاتية الحالية:</label>
                         <div className="bg-white p-4 rounded border border-gray-100 min-h-[120px] shadow-inner">

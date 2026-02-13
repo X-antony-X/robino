@@ -35,7 +35,6 @@ function FormMaterials() {
 
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-6">
-      {/* FORM */}
       <form
         onSubmit={handleAdd}
         className="flex flex-col sm:flex-row gap-3 items-center"
@@ -57,7 +56,6 @@ function FormMaterials() {
         </button>
       </form>
 
-      {/* TABLE */}
       <div className="overflow-x-auto">
         <table className="w-full border rounded-lg overflow-hidden">
           <thead className="bg-gray-100">

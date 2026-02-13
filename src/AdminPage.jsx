@@ -14,8 +14,16 @@ function AdminPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white shadow-xl rounded-xl">
+    <div className="max-w-md mx-auto mt-20 p-6 rounded-xl">
       <h2 className="text-xl font-bold mb-4 text-right">إنشاء رابط فيدباك</h2>
+        <br />
+        <hr />
+        <br />
+      <h4 className="text-xl font-bold mb-4 text-right">هنا بيطلعلك رابط بيفتح مره واحده بس لشخص واحد بس و بيقفل لما الشخص ده يعمل يسجل الفيد باك بتاعه</h4>
+        <br />
+        <hr />
+        <br />
+      <h4 className="text-xl font-bold mb-4 text-right">اكتب الاسم ثلاثي و ابعته للاشخاص اللي اتعاملوا معاك بس</h4>
 
       <input
         type="email"

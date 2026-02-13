@@ -64,7 +64,7 @@ function HeroSection() {
         <img
           src="/logo.png"
           alt="logo"
-          className="image w-[] sm:w-[200px] md:w-[200px] lg:w-[300px] h-auto"
+          className="image w-[] sm:w-[100px] md:w-[150px] lg:w-[300px] h-auto"
         />
     </section>
   );

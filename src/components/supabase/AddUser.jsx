@@ -6,7 +6,6 @@ export async function AddUser({ name, phone }) {
     .insert([{ name, phone }]);
 
   if (error) {
-    // رقم مكرر
     if (error.code === "23505") {
       throw new Error("رقم التليفون ده متسجل قبل كده");
     }

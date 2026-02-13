@@ -13,13 +13,11 @@ function FormMock() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  /* ================= GET ================= */
   const { data: mocks = [] } = useQuery({
     queryKey: ["mock"],
     queryFn: GetMock,
   });
 
-  /* ================= ADD ================= */
   const addMutation = useMutation({
     mutationFn: async () => {
       const files = Array.from(fileRef.current.files);
@@ -43,7 +41,6 @@ function FormMock() {
     },
   });
 
-  /* ================= DELETE ================= */
   const deleteMutation = useMutation({
     mutationFn: ({ id, images }) => deleteMock(id, images),
     onSuccess: () => {
@@ -59,7 +56,6 @@ function FormMock() {
   return (
     <div className="w-full flex flex-col items-center">
 
-      {/* ===== FORM ===== */}
       <div className="w-full flex justify-center">
         <div className="w-full max-w-md px-4 pt-10">
 
@@ -108,7 +104,6 @@ function FormMock() {
         </div>
       </div>
 
-      {/* ===== CARDS ===== */}
       <div className="w-full px-4 mt-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
 
@@ -117,7 +112,6 @@ function FormMock() {
               key={item.id}
               className="relative flex w-full max-w-sm flex-col rounded-xl bg-[#1a1a1a] text-gray-200 shadow-md border border-gray-800 mb-10"
             >
-              {/* الصور */}
               <div className="relative mx-4 -mt-6 overflow-hidden rounded-xl shadow-lg bg-[#252525]">
                 <div className="grid grid-cols-3 grid-rows-2 gap-1 h-44">
                   {item.image.slice(0, 5).map((img, i) => (

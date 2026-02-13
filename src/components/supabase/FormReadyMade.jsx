@@ -16,7 +16,7 @@ function FormReadyMade() {
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
   const [available, setAvailable] = useState(false)
-  const [editId, setEditId] = useState(null) // null = add mode
+  const [editId, setEditId] = useState(null)
 
   const startEdit = (item) => {
     setEditId(item.id)
@@ -36,13 +36,11 @@ function FormReadyMade() {
     fileRef.current.value = ""
   }
 
-  /* ================= GET ================= */
   const { data: items = [] } = useQuery({
     queryKey: ["ready-made"],
     queryFn: GetReadyMade,
   })
 
-  /* ================= ADD ================= */
   const addMutation = useMutation({
     mutationFn: async () => {
       const files = fileRef.current.files
@@ -70,7 +68,6 @@ function FormReadyMade() {
     },
   })
 
-  /* ================= DELETE ================= */
   const deleteMutation = useMutation({
     mutationFn: deleteReadyMade,
     onSuccess: () => {
@@ -78,7 +75,6 @@ function FormReadyMade() {
     },
   })
 
-  /* ================= UPDATE ================= */
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => updateReadyMade(id, data),
     onSuccess: () => queryClient.invalidateQueries(["readyMade"])
@@ -88,7 +84,6 @@ function FormReadyMade() {
   return (
     <div className="w-full flex flex-col items-center">
 
-      {/* ===== FORM ===== */}
       <div className="w-full flex justify-center">
         <div className="w-full max-w-md px-4 pt-10">
 
@@ -143,12 +138,11 @@ function FormReadyMade() {
                 className="bg-gray-100 rounded-md p-2"
               />
 
-              {/* Available */}
               <div className="flex items-center justify-between">
                 <span>Available ?</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input class="sr-only peer" type="checkbox" checked={available} onChange={(e) => setAvailable(e.target.checked)} />
-                    <div class="peer rounded-full outline-none duration-100 after:duration-500 w-14 h-8 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 
+                <label className="relative inline-flex items-center cursor-pointer">
+                    <input className="sr-only peer" type="checkbox" checked={available} onChange={(e) => setAvailable(e.target.checked)} />
+                    <div className="peer rounded-full outline-none duration-100 after:duration-500 w-14 h-8 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 
                         after:content-['No'] after:absolute after:outline-none after:rounded-full 
                         after:h-6 after:w-6 after:bg-white after:top-1 after:left-1 
                         after:flex after:justify-center after:items-center after:text-sky-800 after:font-bold after:text-[10px]
@@ -190,17 +184,13 @@ function FormReadyMade() {
           </div>
         </div>
       </div>
-      {/* ===== CARDS ===== */}
       <div className="w-full px-4 mt-12">
 <div className="w-[90%] mx-auto flex flex-col gap-10">
-  {/* Card Container */}
   
   {items.map((item) => (<div key={item.id} className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 bg-gradient-to-b from-[#121212] via-[#2a2a2a] to-[#1a1a1a] text-white border border-gray-800 rounded-2xl shadow-xl">
     
-{/* Image Section - 2x2 Grid */}
 <div className="w-full md:w-48 rounded-lg overflow-hidden">
 
-  {/* ===== MOBILE ===== */}
   <div className="grid grid-cols-2 gap-2 h-60 md:hidden">
     {item.images.slice(0, 4).map((img, i) => (
       <Zoom key={i}>
@@ -213,7 +203,6 @@ function FormReadyMade() {
     ))}
   </div>
 
-  {/* ===== DESKTOP ===== */}
   <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2 h-60">
     {item.images.slice(0, 4).map((img, i) => (
       <Zoom key={i}>
@@ -229,7 +218,6 @@ function FormReadyMade() {
 </div>
 
 
-    {/* Info Section */}
     <div className="flex-1 text-center md:text-left space-y-1">
       <h3 className="text-xl font-bold tracking-tight text-yellow-500">{item.title}</h3>
       <p className="text-lg font-medium opacity-90">{item.price}</p>
@@ -238,7 +226,6 @@ function FormReadyMade() {
       </p>
     </div>
 
-    {/* Actions Section */}
     <div className="flex flex-col sm:flex-row md:flex-col gap-3 min-w-[140px] w-full md:w-auto">
       <button onClick={() => startEdit(item)} className="flex-1 px-6 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-black rounded-lg transition-colors shadow-lg uppercase">
         Update
@@ -248,7 +235,6 @@ function FormReadyMade() {
         Delete
       </button>
 
-      {/* Badge/Tag Section */}
       <div className="p-[1px] bg-gradient-to-b from-gray-500 to-gray-700 rounded-lg shadow-inner">
         <div className="bg-[#1a1a1a] rounded-[7px] px-4 py-2 flex items-center justify-center gap-2">
           <span className="text-xs font-bold text-gray-300 tracking-wider uppercase">Status: {item.state ? "Available" : "Sold out"}</span>

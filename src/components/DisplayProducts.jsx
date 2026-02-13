@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
-import {Link} from "react-router-dom"
 import { useNavigate } from "react-router-dom";
 import Zoom from 'react-medium-image-zoom';
 import "react-medium-image-zoom/dist/styles.css";
 import { useQuery } from "@tanstack/react-query";
 import { GetReadyMade } from "./supabase/GetReadyMade";
 
-function DisplayProducts({ duration = 0.6, stagger = 0.1, setSelected }) {
+function DisplayProducts({ duration = 0.6, stagger = 0.1 }) {
   const navigate = useNavigate();
   const { data: items = [] } = useQuery({
     queryKey: ["ready-made"],
@@ -28,10 +27,8 @@ function DisplayProducts({ duration = 0.6, stagger = 0.1, setSelected }) {
           }}
           className="">
       <div className="flex flex-col md:flex-row items-center md:items-stretch justify-between gap-6 p-5 bg-gradient-to-b from-[#121212] via-[#4A4A4A] to-[#252525] text-white border border-[#121212] rounded-lg">
-      {/* Image Section - 2x2 Grid */}
       <div className="w-full md:w-48 rounded-lg overflow-hidden">
 
-        {/* ===== MOBILE ===== */}
         <div className="grid grid-cols-2 gap-2 h-60 md:hidden">
           {item.images.slice(0, 4).map((img, i) => (
             <Zoom key={i}>
@@ -44,7 +41,6 @@ function DisplayProducts({ duration = 0.6, stagger = 0.1, setSelected }) {
           ))}
         </div>
 
-        {/* ===== DESKTOP ===== */}
         <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-2 h-60">
           {item.images.slice(0, 4).map((img, i) => (
             <Zoom key={i}>

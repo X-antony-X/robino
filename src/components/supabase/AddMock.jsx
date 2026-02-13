@@ -7,7 +7,7 @@ export async function AddMock({ title, description, images }) {
       {
         title,
         description,
-        image: images, // array
+        image: images,
       },
     ])
     .select();

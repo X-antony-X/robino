@@ -13,10 +13,8 @@ function Header() {
             const currentScrollY = window.scrollY;
 
             if (currentScrollY > lastScrollY) {
-                // نازل لتحت
                 setShowHeader(false);
             } else {
-                // طالع لفوق
                 setShowHeader(true);
             }
 

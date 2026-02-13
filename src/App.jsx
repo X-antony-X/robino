@@ -1,5 +1,4 @@
 import { useState , useEffect} from 'react'
-import Loader from './components/Loader.jsx'
 import Header from './components/Header.jsx'
 import Home from './components/Home.jsx'
 import ProductsComponent from './components/ProductsComponent.jsx'
@@ -37,21 +36,18 @@ function App() {
       setSession(session);
     });
 
-    return () => subscription.unsubscribe(); // تنظيف الـ listener
+    return () => subscription.unsubscribe();
   }, []);
 
   const adminRoutes = ["/adminPage", "/carousels", "/craftedUniforms", "/mockUp", "/readyMade", "/users", "/materials", "/myPortfolio"];
   const isAdminRoute = adminRoutes.includes(location.pathname);
   
-  // لا تظهر الهيدر العادي في صفحات الإدارة
   const hideLayout = isAdminRoute || location.pathname === "/adminForm";
 
   return (
     <>
-      {/* الهيدر العادي يظهر فقط في الصفحات العامة */}
       {!hideLayout && <Header />}
 
-      {/* المنيو الخاص بالآدمن يظهر فقط إذا كان هناك session وفي مسار آدمن */}
       {session && isAdminRoute && <AdminMenu />}
 
       <ScrollToTop />
@@ -62,10 +58,8 @@ function App() {
         <Route path='/portfolio' element={<Portfolio />} />
         <Route path='/feedback' element={<Feedback />} />
         
-        {/* صفحة تسجيل الدخول */}
         <Route path='/adminForm' element={<AdminForm />} />
 
-        {/* مسارات محمية: لو مفيش session الـ ProtectedRoute هيرجعه للـ login */}
         <Route 
           path="/adminPage" 
           element={
@@ -139,7 +133,3 @@ function App() {
 }
 
 export default App
-// سود عميق (Deep Black)	#121212	الخلفيات الأساسية أو النصوص الكبيرة (أهدى من الأسود الصريح).
-// رمادي متوسط (Slate Gray)	#4A4A4A	الأيقونات، النصوص الثانوية، أو الحدود (Borders).
-// رمادي فاتح (Cool Gray)	#F5F5F7	الخلفيات الفاتحة، البطاقات (Cards)، أو الـ Hover.
-// أبيض نقي (Pure White)	#FFFFFF النصوص فوق الخلفيات الغامقة أو المساحات البيضاء الأساسية.

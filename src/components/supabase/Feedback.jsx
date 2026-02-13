@@ -8,9 +8,8 @@ function Feedback() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
-  // 1️⃣ حط كل الـ Hooks هنا في الأول بالترتيب
   const [valid, setValid] = useState(false);
-  const [loading, setLoading] = useState(true); // حالة عشان تمنع الـ Access Denied الوهمي في البداية
+  const [loading, setLoading] = useState(true);
   const [hover, setHover] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
@@ -23,7 +22,6 @@ function Feedback() {
     mutationFn: ({ data, token }) => SubmitFeedback(data, token),
   });
 
-  // 2️⃣ الـ useEffect للتحقق
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -51,11 +49,9 @@ function Feedback() {
     mutate({ data: formData, token: token });
   };
 
-  // 3️⃣ الـ Conditional Rendering (الـ Returns الفرعية) لازم تكون بـعـد الـ Hooks
   if (loading) return <h1 className="text-center mt-20 text-white">جاري التحقق...</h1>;
   if (!valid) return <h1 className="text-center mt-20 text-white">Access Denied</h1>;
 
-  // 4️⃣ الـ UI الأساسي
   return (
     <div className="min-h-screen flex items-center justify-center px-4 mt-20">
       <div className="w-full max-w-lg backdrop-blur-xl bg-white/70 border border-white/40 shadow-2xl rounded-3xl p-8 transition-all duration-500">
@@ -68,7 +64,6 @@ function Feedback() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* الإسم */}
           <div className="relative">
             <input
               type="text"
@@ -83,7 +78,6 @@ function Feedback() {
             </label>
           </div>
 
-          {/* نوع المستخدم */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2 text-right">أنا أريد التقييم كـ</label>
             <select
@@ -97,7 +91,6 @@ function Feedback() {
             </select>
           </div>
 
-          {/* التقييم */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-3 text-right">تقييمك للخدمة</label>
             <div className="flex flex-row-reverse justify-center gap-2">
@@ -119,7 +112,6 @@ function Feedback() {
             </div>
           </div>
 
-          {/* التعليق */}
           <div className="relative">
             <textarea
               required

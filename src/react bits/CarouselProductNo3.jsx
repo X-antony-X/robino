@@ -3,20 +3,39 @@ import { motion, useMotionValue, useTransform } from 'motion/react';
 import RobinoIcon from '@/components/RobinoIcon';
 import { GetFromCar3 } from '@/components/supabase/GetFromCar3';
 import { useQuery } from '@tanstack/react-query';
+import ImageLoader from '@/loaders/ImageLoader';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
 const GAP = 16;
 const SPRING_OPTIONS = { type: 'spring', stiffness: 300, damping: 30 };
 
-function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x, transition }) {
-  const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
-  const outputRange = [90, 0, -90];
-  const rotateY = useTransform(x, range, outputRange, { clamp: false });
+function CarouselProductItem({
+  item,
+  index,
+  itemWidth,
+  round,
+  trackItemOffset,
+  x,
+  transition,
+  isAnimating 
+}) {
+  const range = [
+    -(index + 1) * trackItemOffset,
+    -index * trackItemOffset,
+    -(index - 1) * trackItemOffset
+  ];
+
+  const rotateY = useTransform(x, range, [90, 0, -90], {
+    clamp: false
+  });
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   return (
     <motion.div
-      key={`${item?.id ?? index}-${index}`}
       className={`relative shrink-0 flex flex-col ${
         round
           ? 'items-center justify-center text-center bg-[#060010] border-0'
@@ -25,21 +44,39 @@ function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x
       style={{
         width: itemWidth,
         height: round ? itemWidth : '100%',
-        rotateY: rotateY,
-        backgroundImage: `url(${item.image})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        rotateY,
         ...(round && { borderRadius: '50%' })
       }}
       transition={transition}
     >
-      <div className={`${round ? 'p-0 m-0' : 'mb-4 p-5'}`}>
+      {!isLoaded && (
+        <div className="absolute inset-0 z-10">
+          <ImageLoader className="rounded-[12px]" />
+        </div>
+      )}
+
+      <div className={`w-full h-full ${isAnimating ? "pointer-events-none" : ""}`}>
+        <Zoom>
+          <img
+            src={item.image}
+            alt={item.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            onLoad={() => setIsLoaded(true)}
+            onError={() => setIsLoaded(true)}
+          />
+        </Zoom>
+      </div>
+
+      <div className={`${round ? 'p-0 m-0' : 'mb-4 p-5'} relative z-20 pointer-events-none`}>
         <span className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#060010]">
           <RobinoIcon size={20} />
         </span>
       </div>
-      <div className="p-5">
-        <div className="mb-1 font-black text-lg text-white">{item.title}</div>
+
+      <div className="p-5 relative z-20 pointer-events-none">
+        <div className="mb-1 font-black text-lg text-white">
+          {item.title}
+        </div>
       </div>
     </motion.div>
   );
@@ -48,20 +85,28 @@ function CarouselProductItem({ item, index, itemWidth, round, trackItemOffset, x
 export default function CarouselProductNo3({
   baseWidth = 300,
   autoplay = true,
-  autoplayDelay = 2500,
+  autoplayDelay = 8000,
   pauseOnHover = true,
   loop = true,
   round = false
 }) {
-
   const {
     data: carouselData = [],
     error: carouselError,
-    isPending: carouselPending
+    isPending: carouselPending,
+    refetch 
   } = useQuery({
-    queryKey: ["carousel3"],
+    queryKey: ['carousel3'],
     queryFn: GetFromCar3,
+    retry: 3,
+    refetchOnWindowFocus: true,
   });
+
+  useEffect(() => {
+    const handleOnline = () => refetch();
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [refetch]);
 
   const items = useMemo(() => {
     return carouselData.flatMap(item =>
@@ -76,6 +121,7 @@ export default function CarouselProductNo3({
   const containerPadding = 16;
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + GAP;
+
   const itemsForRender = useMemo(() => {
     if (!loop) return items;
     if (items.length === 0) return [];
@@ -89,57 +135,43 @@ export default function CarouselProductNo3({
   const [isAnimating, setIsAnimating] = useState(false);
 
   const containerRef = useRef(null);
-  useEffect(() => {
-    if (pauseOnHover && containerRef.current) {
-      const container = containerRef.current;
-      const handleMouseEnter = () => setIsHovered(true);
-      const handleMouseLeave = () => setIsHovered(false);
-      container.addEventListener('mouseenter', handleMouseEnter);
-      container.addEventListener('mouseleave', handleMouseLeave);
-      return () => {
-        container.removeEventListener('mouseenter', handleMouseEnter);
-        container.removeEventListener('mouseleave', handleMouseLeave);
-      };
+
+  const activeIndex = useMemo(() => {
+    if (items.length === 0) return 0;
+    if (loop) {
+      return (position - 1 + items.length) % items.length;
     }
-  }, [pauseOnHover]);
+    return Math.min(position, items.length - 1);
+  }, [position, items.length, loop]);
 
   useEffect(() => {
-    if (!autoplay || itemsForRender.length <= 1) return undefined;
-    if (pauseOnHover && isHovered) return undefined;
+    if (!autoplay || itemsForRender.length <= 1 || isAnimating) return;
+    if (pauseOnHover && isHovered) return;
 
     const timer = setInterval(() => {
+      setIsAnimating(true);
       setPosition(prev => Math.min(prev + 1, itemsForRender.length - 1));
     }, autoplayDelay);
 
     return () => clearInterval(timer);
-  }, [autoplay, autoplayDelay, isHovered, pauseOnHover, itemsForRender.length]);
+  }, [autoplay, autoplayDelay, isHovered, pauseOnHover, itemsForRender.length, isAnimating]);
 
   useEffect(() => {
-    const startingPosition = loop ? 1 : 0;
-    setPosition(startingPosition);
-    x.set(-startingPosition * trackItemOffset);
+    const start = loop ? 1 : 0;
+    setPosition(start);
+    x.set(-start * trackItemOffset);
   }, [items.length, loop, trackItemOffset, x]);
 
-  useEffect(() => {
-    if (!loop && position > itemsForRender.length - 1) {
-      setPosition(Math.max(0, itemsForRender.length - 1));
-    }
-  }, [itemsForRender.length, loop, position]);
-
   const effectiveTransition = isJumping ? { duration: 0 } : SPRING_OPTIONS;
-
-  const handleAnimationStart = () => {
-    setIsAnimating(true);
-  };
 
   const handleAnimationComplete = () => {
     if (!loop || itemsForRender.length <= 1) {
       setIsAnimating(false);
       return;
     }
-    const lastCloneIndex = itemsForRender.length - 1;
 
-    if (position === lastCloneIndex) {
+    const lastClone = itemsForRender.length - 1;
+    if (position === lastClone) {
       setIsJumping(true);
       const target = 1;
       setPosition(target);
@@ -148,10 +180,7 @@ export default function CarouselProductNo3({
         setIsJumping(false);
         setIsAnimating(false);
       });
-      return;
-    }
-
-    if (position === 0) {
+    } else if (position === 0) {
       setIsJumping(true);
       const target = items.length;
       setPosition(target);
@@ -160,10 +189,13 @@ export default function CarouselProductNo3({
         setIsJumping(false);
         setIsAnimating(false);
       });
-      return;
+    } else {
+      setIsAnimating(false);
     }
+  };
 
-    setIsAnimating(false);
+  const handleDragStart = () => {
+    setIsAnimating(true);
   };
 
   const handleDragEnd = (_, info) => {
@@ -172,10 +204,13 @@ export default function CarouselProductNo3({
       offset.x < -DRAG_BUFFER || velocity.x < -VELOCITY_THRESHOLD
         ? 1
         : offset.x > DRAG_BUFFER || velocity.x > VELOCITY_THRESHOLD
-          ? -1
-          : 0;
+        ? -1
+        : 0;
 
-    if (direction === 0) return;
+    if (!direction) {
+      setIsAnimating(false);
+      return;
+    }
 
     setPosition(prev => {
       const next = prev + direction;
@@ -184,33 +219,33 @@ export default function CarouselProductNo3({
     });
   };
 
-  const dragProps = loop
-    ? {}
-    : {
-        dragConstraints: {
-          left: -trackItemOffset * Math.max(itemsForRender.length - 1, 0),
-          right: 0
-        }
-      };
-
-  const activeIndex =
-    items.length === 0 ? 0 : loop ? (position - 1 + items.length) % items.length : Math.min(position, items.length - 1);
+  if (carouselPending || carouselError || items.length === 0) {
+    return (
+      <div
+        className={`relative overflow-hidden flex items-center justify-center ${round ? 'rounded-full border border-white' : 'rounded-[24px] border border-[#222]'}`}
+        style={{ width: `${baseWidth}px`, height: round ? `${baseWidth}px` : '165px' }}
+      >
+        <ImageLoader />
+      </div>
+    );
+  }
 
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden p-4 ${
-        round ? 'rounded-full border border-white' : 'rounded-[24px] border border-[#222]'
-      }`}
-      style={{
-        width: `${baseWidth}px`,
-        ...(round && { height: `${baseWidth}px` })
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative overflow-hidden p-4 ${round ? 'rounded-full border border-white' : 'rounded-[24px] border border-[#222]'}`}
+      style={{ width: `${baseWidth}px`, ...(round && { height: `${baseWidth}px` }) }}
     >
       <motion.div
         className="flex"
-        drag={isAnimating ? false : 'x'}
-        {...dragProps}
+        drag="x"
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        animate={{ x: -(position * trackItemOffset) }}
+        transition={effectiveTransition}
+        onAnimationComplete={handleAnimationComplete}
         style={{
           width: itemWidth,
           gap: `${GAP}px`,
@@ -218,11 +253,6 @@ export default function CarouselProductNo3({
           perspectiveOrigin: `${position * trackItemOffset + itemWidth / 2}px 50%`,
           x
         }}
-        onDragEnd={handleDragEnd}
-        animate={{ x: -(position * trackItemOffset) }}
-        transition={effectiveTransition}
-        onAnimationStart={handleAnimationStart}
-        onAnimationComplete={handleAnimationComplete}
       >
         {itemsForRender.map((item, index) => (
           <CarouselProductItem
@@ -234,28 +264,26 @@ export default function CarouselProductNo3({
             trackItemOffset={trackItemOffset}
             x={x}
             transition={effectiveTransition}
+            isAnimating={isAnimating}
           />
         ))}
       </motion.div>
-      <div className={`flex w-full justify-center ${round ? 'absolute z-20 bottom-12 left-1/2 -translate-x-1/2' : ''}`}>
+
+      <div className="flex w-full justify-center">
         <div className="mt-4 flex w-[150px] justify-between px-8">
           {items.map((_, index) => (
             <motion.div
               key={index}
-              className={`h-2 w-2 rounded-full cursor-pointer transition-colors duration-150 ${
-                activeIndex === index
-                  ? round
-                    ? 'bg-white'
-                    : 'bg-[#333333]'
-                  : round
-                    ? 'bg-[#555]'
-                    : 'bg-[rgba(51,51,51,0.4)]'
+              className={`h-2 w-2 rounded-full cursor-pointer ${
+                activeIndex === index ? (round ? 'bg-white' : 'bg-[#333333]') : (round ? 'bg-[#555]' : 'bg-[rgba(51,51,51,0.4)]')
               }`}
-              animate={{
-                scale: activeIndex === index ? 1.2 : 1
+              animate={{ scale: activeIndex === index ? 1.2 : 1 }}
+              onClick={() => {
+                if (!isAnimating) {
+                  setIsAnimating(true);
+                  setPosition(loop ? index + 1 : index);
+                }
               }}
-              onClick={() => setPosition(loop ? index + 1 : index)}
-              transition={{ duration: 0.15 }}
             />
           ))}
         </div>

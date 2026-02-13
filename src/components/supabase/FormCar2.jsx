@@ -39,7 +39,6 @@ function FormCar2() {
         <div className="w-full flex justify-center">
             <div className="w-full max-w-md px-4 pt-10">
                 
-                {/* العنوان */}
                 <p className="relative mx-auto mb-8 w-fit inline-flex items-center gap-2 px-6 py-3 font-semibold text-slate-50
                 bg-gradient-to-tr from-slate-900/30 via-slate-900/70 to-slate-900/30
                 ring-4 ring-slate-900/20 rounded-full overflow-hidden
@@ -49,7 +48,6 @@ function FormCar2() {
                 CAROUSEL 2
                 </p>
 
-                {/* الفورم */}
                 <div className="w-full bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
                     ADD or DELETE

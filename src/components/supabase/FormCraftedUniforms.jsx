@@ -13,13 +13,11 @@ function FormCraftedUniforms() {
   const [description, setDescription] = useState("");
   const queryClient = useQueryClient();
 
-  /* ================= FETCH ================= */
   const { data: crafted = [] } = useQuery({
     queryKey: ["crafted"],
     queryFn: GetCrafted,
   });
 
-  /* ================= ADD ================= */
   const addMutation = useMutation({
     mutationFn: async () => {
       const file = fileRef.current.files[0];
@@ -39,7 +37,6 @@ function FormCraftedUniforms() {
     },
   });
 
-  /* ================= DELETE ================= */
   const deleteMutation = useMutation({
     mutationFn: ({ id, image }) =>
       deleteCraftedUniforms(id, image),
@@ -48,7 +45,6 @@ function FormCraftedUniforms() {
     },
   });
 
-  /* ================= SUBMIT ================= */
   function handleSubmit(e) {
     e.preventDefault();
     addMutation.mutate();
@@ -57,7 +53,6 @@ function FormCraftedUniforms() {
   return (
     <div className="w-full flex flex-col items-center">
 
-      {/* ===== FORM ===== */}
       <div className="w-full flex justify-center">
         <div className="w-full max-w-md px-4 pt-10">
 
@@ -97,7 +92,6 @@ function FormCraftedUniforms() {
         </div>
       </div>
 
-      {/* ===== CARDS ===== */}
       <div className="w-full px-4 mt-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
 

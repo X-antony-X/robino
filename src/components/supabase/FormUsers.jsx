@@ -31,13 +31,11 @@ function FormUsers() {
     window.open(url, "_blank");
   };
 
-  /* ===== GET USERS ===== */
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: GetUser,
   });
 
-  /* ===== ADD ===== */
   const addMutation = useMutation({
     mutationFn: AddUser,
     onSuccess: () => {
@@ -45,7 +43,6 @@ function FormUsers() {
     },
   });
 
-  /* ===== UPDATE ===== */
   const updateMutation = useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
@@ -53,7 +50,6 @@ function FormUsers() {
     },
   });
 
-  /* ===== DELETE ===== */
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
@@ -61,7 +57,6 @@ function FormUsers() {
     },
   });
 
-  /* ===== SUBMIT ===== */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !phone) return;
@@ -77,21 +72,18 @@ function FormUsers() {
     setPhone("");
   };
 
-  /* ===== EDIT ===== */
   const handleEdit = (user) => {
     setEditId(user.id);
     setName(user.name);
     setPhone(user.phone);
   };
 
-  /* ===== DELETE ===== */
   const handleDelete = (id) => {
     if (confirm("Are you sure?")) {
       deleteMutation.mutate(id);
     }
   };
 
-  /* ===== CANCEL ===== */
   const cancelEdit = () => {
     setEditId(null);
     setName("");
@@ -102,7 +94,6 @@ function FormUsers() {
     <div className="w-full min-h-screen bg-gray-100 p-4 flex justify-center">
       <div className="w-full max-w-4xl space-y-6">
 
-        {/* ===== FORM ===== */}
         <div className="bg-white rounded-lg shadow p-5">
           <h2 className="text-xl font-bold mb-4">
             {editId ? "Update User" : "Add User"}
@@ -165,7 +156,6 @@ function FormUsers() {
         </div>
 
 
-        {/* ===== TABLE ===== */}
         <div className="bg-white rounded-lg shadow overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-200">

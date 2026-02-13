@@ -29,7 +29,7 @@ const AdminForm = () => {
   <div className='p-10 bg-gradient-to-b from-[#252525] via-[#252525] to-[#121212] w-screen h-screen'>
     <GradientText colors={["#fff", "#4A4A4A", "#FFFFFF", "#4A4A4A", "#fff"]} animationSpeed={3} showBorder={false} className="custom-class font-bold text-3xl md:text-4xl lg:text-5xl">ROBINO ADMIN LOGIN</GradientText>
     <div className="w-64 h-80 bg-indigo-50 rounded shadow flex flex-col justify-between p-3 mx-auto my-20">
-      <form className="text-[#4A4A4A]" action method="post" onSubmit={handleSubmit}>
+      <form className="text-[#4A4A4A]" method="post" onSubmit={handleSubmit}>
         <fieldset className="border-4 border-dotted border-[#4A4A4A] p-5">
           <legend className="px-2 font-bold -mx-2 text-[#121212]">Welcome Ahmed !</legend>
           <label className="text-xs font-bold after:content-['*'] after:text-red-400 text-[#121212]" htmlFor="email">Mail </label>     
