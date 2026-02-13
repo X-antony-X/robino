@@ -1,4 +1,4 @@
-import GradientText from '../../react bits/GradientText.jsx';
+import GradientText from '../../react-bits/GradientText.jsx';
 import OrderBtn from './OrderBtn.jsx';
 import Menu from './Menu.jsx';
 

@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { GoArrowUpRight } from 'react-icons/go';
-import GradientText from '@/react bits/GradientText';
+import GradientText from '@/react-bits/GradientText.jsx';
 import OrderBtn from './Header-components/OrderBtn.jsx';
 import { Link, useLocation } from "react-router-dom";
 

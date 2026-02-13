@@ -1,5 +1,5 @@
 import React from 'react';
-import GradientText from './react bits/GradientText';
+import GradientText from './react-bits/GradientText';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { supabase } from './CreateClient';

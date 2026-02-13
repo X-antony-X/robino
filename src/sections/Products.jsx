@@ -1,7 +1,7 @@
-import CarouselProductNo1 from "@/react bits/CarouselProductNo1";
-import CarouselProductNo2 from "@/react bits/CarouselProductNo2";
-import CarouselProductNo3 from "@/react bits/CarouselProductNo3";
-import CarouselProductNo4 from "@/react bits/CarouselProductNo4";
+import CarouselProductNo1 from "@/react-bits/CarouselProductNo1";
+import CarouselProductNo2 from "@/react-bits/CarouselProductNo2";
+import CarouselProductNo3 from "@/react-bits/CarouselProductNo3";
+import CarouselProductNo4 from "@/react-bits/CarouselProductNo4";
 import {Link} from "react-router-dom"
 
 function Products() {
